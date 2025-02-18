@@ -35,11 +35,15 @@ require('lazy').setup({
   -- LSP Plugins
   require 'plugins.lazydev',
 
+  require 'plugins.jdtls',
+
   require 'plugins.lsp-config',
 
   require 'plugins.conform',
 
   require 'plugins.cmp',
+
+  require 'plugins.dap',
 
   -- THEMING
   require 'plugins.theme',

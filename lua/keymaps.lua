@@ -31,3 +31,45 @@ vim.keymap.set('n', '<C-l>', '<C-w><C-l>', { desc = 'Move focus to the right win
 vim.keymap.set('n', '<C-j>', '<C-w><C-j>', { desc = 'Move focus to the lower window' })
 vim.keymap.set('n', '<C-k>', '<C-w><C-k>', { desc = 'Move focus to the upper window' })
 
+-- Keybinds for terminal functions
+local terminal_job_id = 0
+vim.keymap.set('n', '<leader>st', function()
+  vim.cmd.vnew()
+  vim.cmd.term()
+  vim.cmd.wincmd 'J'
+  vim.api.nvim_win_set_height(0, 15)
+
+  terminal_job_id = vim.bo.channel
+end)
+
+vim.keymap.set('n', '<leader>ad', function()
+  vim.fn.chansend(terminal_job_id, GetAzureFunctionsRunner(true) .. '\r')
+end, { desc = 'Run azure function with debug enabled' })
+
+vim.keymap.set('n', '<leader>af', function()
+  vim.fn.chansend(terminal_job_id, GetAzureFunctionsRunner(false) .. '\r')
+end, { desc = 'Run azure function without debug' })
+
+function GetSpringBootMavenRunner(debug)
+  local debug_param = ''
+  if debug then
+    debug_param = ' -Dspring-boot.run.jvmArguments="-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5005"'
+  end
+  return 'mvn spring-boot:run ' .. debug_param
+end
+
+function GetSpringBootGradleRunner(debug)
+  local debug_param = ''
+  if debug then
+    debug_param = ' --debug-jvm'
+  end
+  return './gradlew bootRun ' .. debug_param
+end
+
+function GetAzureFunctionsRunner(debug)
+  local debug_param = ''
+  if debug then
+    debug_param = ' -DenableDebug'
+  end
+  return 'mvn azure-functions:run ' .. debug_param
+end
